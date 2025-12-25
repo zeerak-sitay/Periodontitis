@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periodontitis CAL Measurement</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --depth-1: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --depth-2: 0 8px 16px rgba(0, 0, 0, 0.15);
+            --depth-3: 0 12px 24px rgba(0, 0, 0, 0.2);
+            --depth-4: 0 16px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--depth-4);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--depth-2);
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            animation: pulse 8s infinite linear;
+        }
+
+        @keyframes pulse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background-color: white;
+            box-shadow: var(--depth-1);
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+            animation: slideIn 0.6s ease-out;
+            animation-fill-mode: both;
+            position: relative;
+        }
+
+        .section::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--border-radius);
+            box-shadow: var(--depth-3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--depth-2);
+        }
+
+        .section:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 1.4rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: white;
+            box-shadow: var(--depth-1);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2), var(--depth-2);
+        }
+
+        .error {
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 0 3px rgba(247, 37, 133, 0.2), var(--depth-1) !important;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .checkbox-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .checkbox-group:hover {
+            background-color: var(--gray-light);
+        }
+
+        .checkbox-group input {
+            width: auto;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .cal-input {
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: var(--depth-1);
+        }
+
+        .cal-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2), var(--depth-2);
+        }
+
+        .validation-message {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--danger);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            text-align: center;
+            border-left: 4px solid var(--danger);
+            animation: fadeIn 0.5s;
+            grid-column: 1 / -1;
+            box-shadow: var(--depth-1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            box-shadow: var(--depth-2);
+            grid-column: 1 / -1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--depth-3);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-top: 30px;
+            display: none;
+            animation: fadeIn 0.8s ease-out;
+            border-left: 4px solid var(--success);
+            grid-column: 1 / -1;
+            box-shadow: var(--depth-2);
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--depth-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .result-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--depth-2);
+        }
+
+        .result-item strong {
+            color: var(--primary);
+        }
+
+        .treatment-list {
+            list-style-type: none;
+            margin-top: 15px;
+        }
+
+        .treatment-list li {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--depth-1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .treatment-list li:hover {
+            transform: translateX(10px);
+            box-shadow: var(--depth-2);
+        }
+
+        .treatment-list li i {
+            color: var(--primary);
+        }
+
+        .progress-container {
+            height: 8px;
+            background-color: var(--gray-light);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 1.5s ease-in-out;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .tooth-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            box-shadow: var(--depth-1);
+        }
+
+        .badge-stage1 { background-color: #e3f2fd; color: #1565c0; }
+        .badge-stage2 { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-stage3 { background-color: #fff3e0; color: #ef6c00; }
+        .badge-stage4 { background-color: #ffebee; color: #c62828; }
+        .badge-gradeA { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-gradeB { background-color: #fff3e0; color: #ef6c00; }
+        .badge-gradeC { background-color: #ffebee; color: #c62828; }
+
+        .form-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .cal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+        }
+
+        /* Footer styles */
+        .footer {
+            padding: 20px;
+            text-align: center;
+            background-color: var(--light);
+            border-top: 1px solid var(--gray-light);
+            margin-top: 30px;
+        }
+
+        .developer-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .developer-info p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* History section styles */
+        .history-section {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background-color: white;
+            box-shadow: var(--depth-1);
+            border-left: 4px solid var(--warning);
+            display: none;
+            grid-column: 1 / -1;
+        }
+
+        .history-list {
+            list-style-type: none;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .history-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: var(--gray-light);
+            border-radius: 8px;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--depth-1);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .history-item-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .history-item-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .history-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .history-detail-label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .history-detail-value {
+            color: var(--gray);
+        }
+
+        /* Scrollbar styling */
+        .history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* History info text */
+        .history-info {
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(67, 97, 238, 0.05);
+            border-radius: 8px;
+        }
+
+        .history-info i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-tooth"></i> Periodontitis</h1>
+            <p>Clinical Attachment Loss (CAL) Measurement Tool</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-column">
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-user-injured"></i>
+                        Patient Information
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="patientName">Patient Name (Optional)</label>
+                        <input type="text" id="patientName" placeholder="Enter patient name">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="patientAge">Patient Age</label>
+                        <input type="number" id="patientAge" min="1" max="120" placeholder="Enter patient age">
+                        <div class="error-message" id="patientAgeError">Please enter a valid patient age</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="infectedSurfaces">No. of infected surfaces</label>
+                        <input type="number" id="infectedSurfaces" min="0" placeholder="Enter number of infected surfaces">
+                        <div class="error-message" id="infectedSurfacesError">Please enter number of infected surfaces</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="examinedSurfaces">No. of examined surfaces</label>
+                        <input type="number" id="examinedSurfaces" min="0" placeholder="Enter number of examined surfaces">
+                        <div class="error-message" id="examinedSurfacesError">Please enter number of examined surfaces</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-column">
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-teeth"></i>
+                        Tooth Mostly Affected
+                    </div>
+                    <div class="input-group">
+                        <select id="affectedTooth">
+                            <option value="">Select a tooth</option>
+                            <optgroup label="Maxillary teeth">
+                                <option value="Maxilla central incisor">central incisor</option>
+                                <option value="Maxilla lateral incisor">lateral incisor</option>
+                                <option value="Maxilla canine">canine</option>
+                                <option value="Maxilla 1st premolar">1st premolar</option>
+                                <option value="Maxilla 2nd premolar">2nd premolar</option>
+                                <option value="Maxilla 1st molar">1st molar</option>
+                                <option value="Maxilla 2nd molar">2nd molar</option>
+                            </optgroup>
+                            <optgroup label="Mandibular teeth">
+                                <option value="Mandibular central incisor">central incisor</option>
+                                <option value="Mandibular lateral incisor">lateral incisor</option>
+                                <option value="Mandibular canine">canine</option>
+                                <option value="Mandibular 1st premolar">1st premolar</option>
+                                <option value="Mandibular 2nd premolar">2nd premolar</option>
+                                <option value="Mandibular 1st molar">1st molar</option>
+                                <option value="Mandibular 2nd molar">2nd molar</option>
+                            </optgroup>
+                        </select>
+                        <div class="error-message" id="affectedToothError">Please select the most affected tooth</div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-file-medical"></i>
+                        Presence of Deformity
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="mobility">
+                        <label for="mobility">Excessive tooth mobility</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="intraBony">
+                        <label for="intraBony">Intra-bony defect</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="missingTeeth">
+                        <label for="missingTeeth">Missing teeth due to periodontal disease</label>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-ruler-combined"></i>
+                        CAL Measurements
+                    </div>
+                    <p style="text-align: center; margin-bottom: 15px;">Enter CAL values in mm:</p>
+                    <div class="cal-grid">
+                        <input type="number" id="cal1" class="cal-input" min="0" step="0.1" placeholder="Mesial">
+                        <input type="number" id="cal2" class="cal-input" min="0" step="0.1" placeholder="Distal">
+                        <input type="number" id="cal3" class="cal-input" min="0" step="0.1" placeholder="Buccal">
+                        <input type="number" id="cal4" class="cal-input" min="0" step="0.1" placeholder="Lingual">
+                    </div>
+                    <div class="error-message" id="calError" style="text-align: center;">Please enter all CAL measurements</div>
+                </div>
+            </div>
+            
+            <div class="validation-message" id="validationMessage"></div>
+            
+            <button class="btn" onclick="calculateResults()">
+                <i class="fas fa-calculator"></i>
+                Calculate Results
+            </button>
+            
+            <div class="result-section" id="results">
+                <div class="section-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    Results
+                </div>
+                
+                <div class="result-item">
+                    <strong>Patient:</strong> 
+                    <span id="patientNameResult"></span>
+                </div>
+                
+                <div class="result-item">
+                    <strong>Date:</strong> 
+                    <span id="dateResult"></span>
+                </div>
+                
+                <div class="result-item">
+                    <strong>Distribution:</strong> 
+                    <span id="distributionResult"></span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="distributionProgress"></div>
+                </div>
+                
+                <div class="result-item">
+                    <strong>Periodontitis Type:</strong> 
+                    <span id="periodontitisType"></span>
+                </div>
+                
+                <div class="result-item">
+                    <strong>CAL Mean:</strong> 
+                    <span id="calMean"></span> mm
+                </div>
+                
+                <div class="result-item">
+                    <strong>Stage:</strong> 
+                    <span id="stageResult"></span>
+                </div>
+                
+                <div class="result-item">
+                    <strong>Grade:</strong> 
+                    <span id="gradeResult"></span>
+                </div>
+                
+                <div class="result-item">
+                    <strong>Pattern:</strong> 
+                    <span id="patternResult"></span>
+                </div>
+                
+                <div class="pattern-info" id="patternInfo" style="display: none;">
+                    <div class="pattern-description" id="patternDescription"></div>
+                </div>
+                
+                <div class="section" style="margin-top: 20px;">
+                    <div class="section-title">
+                        <i class="fas fa-stethoscope"></i>
+                        Treatment
+                    </div>
+                    <ul class="treatment-list">
+                        <li><i class="fas fa-comment-medical"></i> Patient motivation</li>
+                        <li><i class="fas fa-toothbrush"></i> Oral hygiene instruction</li>
+                        <li><i class="fas fa-teeth"></i> Scaling and polishing</li>
+                        <li><i class="fas fa-teeth-open"></i> Root planing</li>
+                        <li><i class="fas fa-teeth"></i> Tooth fixation (if the tooth is mobile)</li>
+                        <li><i class="fas fa-calendar-check"></i> Follow up</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="history-section" id="historySection">
+                <div class="section-title">
+                    <i class="fas fa-history"></i>
+                    Patient History (Permanent Record)
+                </div>
+                <div class="history-info">
+                    <i class="fas fa-info-circle"></i>
+                    History entries are permanent and cannot be removed
+                </div>
+                <ul class="history-list" id="historyList">
+                    <!-- History items will be added here dynamically -->
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="developer-info">
+                <p>Developed by: <strong>Zeerak Maaruf</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Root length data - updated to match new tooth names
+        const rootLengths = {
+            "Maxilla central incisor": 13,
+            "Maxilla lateral incisor": 14,
+            "Maxilla canine": 17,
+            "Maxilla 1st premolar": 14,
+            "Maxilla 2nd premolar": 14,
+            "Maxilla 1st molar": 13,
+            "Maxilla 2nd molar": 12,
+            "Mandibular central incisor": 12,
+            "Mandibular lateral incisor": 13,
+            "Mandibular canine": 16,
+            "Mandibular 1st premolar": 14,
+            "Mandibular 2nd premolar": 14,
+            "Mandibular 1st molar": 14,
+            "Mandibular 2nd molar": 13
+        };
+
+        // Pattern definitions
+        const patterns = {
+            "incisal": {
+                name: "Incisal Pattern"
+            },
+            "molar": {
+                name: "Molar Pattern"
+            },
+            "generalized": {
+                name: "- -"
+            },
+            "localized": {
+                name: "- -",
+            }
+        };
+
+        // Load history when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHistory();
+        });
+
+        // History storage - permanent, no deletion
+        function saveToHistory(patientName, date, stage, grade, calMean, distribution, periodontitisType, pattern, affectedTooth) {
+            const history = JSON.parse(localStorage.getItem('periodontitisHistory')) || [];
+            history.unshift({
+                patientName,
+                date,
+                stage,
+                grade,
+                calMean,
+                distribution,
+                periodontitisType,
+                pattern,
+                affectedTooth,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Keep last 20 entries maximum (increase from 10 for permanent storage)
+            if (history.length > 20) {
+                history.pop();
+            }
+            
+            localStorage.setItem('periodontitisHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('periodontitisHistory')) || [];
+            const historyList = document.getElementById('historyList');
+            const historySection = document.getElementById('historySection');
+            
+            if (history.length === 0) {
+                historySection.style.display = 'none';
+                return;
+            }
+            
+            historySection.style.display = 'block';
+            historyList.innerHTML = '';
+            
+            history.forEach((item) => {
+                const historyItem = document.createElement('li');
+                historyItem.className = 'history-item';
+                
+                const date = new Date(item.timestamp).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                historyItem.innerHTML = `
+                    <div class="history-item-header">
+                        <strong>${item.patientName || 'Unnamed Patient'}</strong>
+                        <div class="history-item-date">${date}</div>
+                    </div>
+                    <div class="history-item-details">
+                        <div class="history-detail-item">
+                            <span class="history-detail-label">Stage:</span>
+                            <span class="history-detail-value">${item.stage}</span>
+                        </div>
+                        <div class="history-detail-item">
+                            <span class="history-detail-label">Grade:</span>
+                            <span class="history-detail-value">${item.grade}</span>
+                        </div>
+                        <div class="history-detail-item">
+                            <span class="history-detail-label">CAL Mean:</span>
+                            <span class="history-detail-value">${item.calMean} mm</span>
+                        </div>
+                        <div class="history-detail-item">
+                            <span class="history-detail-label">Distribution:</span>
+                            <span class="history-detail-value">${item.distribution}%</span>
+                        </div>
+                        <div class="history-detail-item">
+                            <span class="history-detail-label">Type:</span>
+                            <span class="history-detail-value">${item.periodontitisType}</span>
+                        </div>
+                        <div class="history-detail-item">
+                            <span class="history-detail-label">Pattern:</span>
+                            <span class="history-detail-value">${item.pattern}</span>
+                        </div>
+                        <div class="history-detail-item">
+                            <span class="history-detail-label">Tooth:</span>
+                            <span class="history-detail-value">${item.affectedTooth}</span>
+                        </div>
+                    </div>
+                `;
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const validationMessage = document.getElementById('validationMessage');
+            validationMessage.style.display = 'none';
+            
+            // Reset all error states
+            document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+            
+            // Patient name is now optional - no validation needed
+            
+            // Validate patient age
+            const patientAge = document.getElementById('patientAge').value;
+            if (!patientAge || patientAge <= 0 || patientAge > 120) {
+                document.getElementById('patientAge').classList.add('error');
+                document.getElementById('patientAgeError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate infected surfaces
+            const infectedSurfaces = document.getElementById('infectedSurfaces').value;
+            if (!infectedSurfaces || infectedSurfaces < 0) {
+                document.getElementById('infectedSurfaces').classList.add('error');
+                document.getElementById('infectedSurfacesError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate examined surfaces
+            const examinedSurfaces = document.getElementById('examinedSurfaces').value;
+            if (!examinedSurfaces || examinedSurfaces <= 0) {
+                document.getElementById('examinedSurfaces').classList.add('error');
+                document.getElementById('examinedSurfacesError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate affected tooth selection
+            const affectedTooth = document.getElementById('affectedTooth').value;
+            if (!affectedTooth) {
+                document.getElementById('affectedTooth').classList.add('error');
+                document.getElementById('affectedToothError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate CAL measurements
+            const cal1 = document.getElementById('cal1').value;
+            const cal2 = document.getElementById('cal2').value;
+            const cal3 = document.getElementById('cal3').value;
+            const cal4 = document.getElementById('cal4').value;
+            
+            if (!cal1 || !cal2 || !cal3 || !cal4 || cal1 < 0 || cal2 < 0 || cal3 < 0 || cal4 < 0) {
+                document.querySelectorAll('.cal-input').forEach(input => {
+                    if (!input.value || input.value < 0) {
+                        input.classList.add('error');
+                    }
+                });
+                document.getElementById('calError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Show validation message if form is invalid
+            if (!isValid) {
+                validationMessage.textContent = 'Please fill in all required fields correctly before calculating results.';
+                validationMessage.style.display = 'block';
+                // Scroll to validation message
+                validationMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            return isValid;
+        }
+
+        function determinePattern(patientAge, affectedTooth, distribution) {
+            // Define tooth categories - updated to match new tooth names
+            const incisors = [
+                "Maxilla central incisor", 
+                "Maxilla lateral incisor", 
+                "Mandibular central incisor", 
+                "Mandibular lateral incisor"
+            ];
+            
+            const molars = [
+                "Maxilla 1st molar", 
+                "Maxilla 2nd molar", 
+                "Mandibular 1st molar", 
+                "Mandibular 2nd molar"
+            ];
+            
+            // Check for specific patterns in younger patients
+            if (patientAge < 30) {
+                if (incisors.includes(affectedTooth)) {
+                    return patterns.incisal;
+                } else if (molars.includes(affectedTooth)) {
+                    return patterns.molar;
+                }
+            }
+            
+            // Otherwise determine based on distribution
+            if (distribution >= 30) {
+                return patterns.generalized;
+            } else {
+                return patterns.localized;
+            }
+        }
+
+        function calculateResults() {
+            // Validate form before proceeding
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Get input values
+            const patientName = document.getElementById('patientName').value;
+            const patientAge = parseInt(document.getElementById('patientAge').value);
+            const infectedSurfaces = parseInt(document.getElementById('infectedSurfaces').value);
+            const examinedSurfaces = parseInt(document.getElementById('examinedSurfaces').value);
+            const affectedTooth = document.getElementById('affectedTooth').value;
+            const mobility = document.getElementById('mobility').checked;
+            const intraBony = document.getElementById('intraBony').checked;
+            const missingTeeth = document.getElementById('missingTeeth').checked;
+            const cal1 = parseFloat(document.getElementById('cal1').value) || 0;
+            const cal2 = parseFloat(document.getElementById('cal2').value) || 0;
+            const cal3 = parseFloat(document.getElementById('cal3').value) || 0;
+            const cal4 = parseFloat(document.getElementById('cal4').value) || 0;
+            
+            // Get current date
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Display patient name and date
+            document.getElementById('patientNameResult').textContent = patientName || 'Not provided';
+            document.getElementById('dateResult').textContent = formattedDate;
+            
+            // Calculate distribution
+            const distribution = (infectedSurfaces / examinedSurfaces) * 100;
+            document.getElementById('distributionResult').textContent = distribution.toFixed(2) + "%";
+            
+            // Animate progress bar
+            setTimeout(() => {
+                document.getElementById('distributionProgress').style.width = Math.min(distribution, 100) + '%';
+            }, 300);
+            
+            // Determine periodontitis type
+            const periodontitisType = distribution >= 30 ? "Generalized periodontitis" : "Localized periodontitis";
+            document.getElementById('periodontitisType').textContent = periodontitisType;
+            
+            // Calculate CAL mean
+            const calMean = (cal1 + cal2 + cal3 + cal4) / 4;
+            document.getElementById('calMean').textContent = calMean.toFixed(2);
+            
+            // Determine stage
+            let stage = "";
+            let stageClass = "";
+            if (mobility || intraBony || missingTeeth) {
+                stage = "Stage 4 (due to presence of deformity)";
+                stageClass = "badge-stage4";
+            } else if (calMean >= 5) {
+                stage = "Stage 3";
+                stageClass = "badge-stage3";
+            } else if (calMean >= 3) {
+                stage = "Stage 2";
+                stageClass = "badge-stage2";
+            } else if (calMean >= 1) {
+                stage = "Stage 1";
+                stageClass = "badge-stage1";
+            } else {
+                stage = "No periodontitis detected";
+                stageClass = "";
+            }
+            document.getElementById('stageResult').innerHTML = stageClass ? `<span class="badge ${stageClass}">${stage}</span>` : stage;
+            
+            // Calculate grade
+            const maxCAL = Math.max(cal1, cal2, cal3, cal4);
+            const rootLength = rootLengths[affectedTooth];
+            const gradeValue = maxCAL / rootLength * 100;
+            
+            let grade = "";
+            let gradeClass = "";
+            if (gradeValue < (patientAge / 2)) {
+                grade = "Grade A";
+                gradeClass = "badge-gradeA";
+            } else if (gradeValue > patientAge) {
+                grade = "Grade C";
+                gradeClass = "badge-gradeC";
+            } else {
+                grade = "Grade B";
+                gradeClass = "badge-gradeB";
+            }
+            document.getElementById('gradeResult').innerHTML = `<span class="badge ${gradeClass}">${grade}</span>`;
+            
+            // Determine pattern
+            const pattern = determinePattern(patientAge, affectedTooth, distribution);
+            document.getElementById('patternResult').textContent = pattern.name;
+            
+            // Save to history (permanent)
+            saveToHistory(
+                patientName, 
+                formattedDate, 
+                stage, 
+                grade, 
+                calMean.toFixed(2), 
+                distribution.toFixed(2), 
+                periodontitisType, 
+                pattern.name, 
+                affectedTooth
+            );
+            
+            // Show results section with animation
+            const resultsSection = document.getElementById('results');
+            resultsSection.style.display = 'block';
+            document.getElementById('validationMessage').style.display = 'none';
+            
+            // Scroll to results
+            setTimeout(() => {
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 500);
+        }
+
+        // Add animations to inputs when they get focus
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
